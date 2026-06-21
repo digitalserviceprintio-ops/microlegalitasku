@@ -1,4 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { Suspense } from "react";
+import { getSiteData } from "@/lib/site-data.functions";
 import {
   ShieldCheck,
   FileText,
@@ -13,7 +17,13 @@ import {
   PhoneCall,
   ClipboardList,
   Send,
+  type LucideIcon,
 } from "lucide-react";
+
+const ICONS: Record<string, LucideIcon> = {
+  ShieldCheck, FileText, Clock, Users, Sparkles,
+  Building2, Receipt, PhoneCall, ClipboardList, MessageCircle,
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,31 +34,53 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Urus NIB & NPWP tanpa ribet. Konsultasi gratis via WhatsApp." },
     ],
   }),
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(siteDataQuery);
+  },
   component: Index,
 });
 
-const WA_NUMBER = "6282186371356";
-const waLink = (msg: string) =>
-  `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+const siteDataQuery = queryOptions({
+  queryKey: ["site-data"],
+  queryFn: async () => {
+    const fn = getSiteData as unknown as () => Promise<any>;
+    return await fn();
+  },
+});
+
+const waLinkBuilder = (number: string) => (msg: string) =>
+  `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
 
 function Index() {
+  const load = useServerFn(getSiteData);
+  const { data } = useSuspenseQuery({
+    ...siteDataQuery,
+    queryFn: () => load(),
+  });
+  const wa = data.settings.whatsapp_number || "6282186371356";
+  const waLink = waLinkBuilder(wa);
+  const businessName = data.settings.business_name || "Legalin Care";
+  const heroBadge = data.settings.hero_badge || "Terpercaya untuk 1.000+ UMKM di Indonesia";
+
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <Hero />
-      <Services />
+      <Navbar waLink={waLink} businessName={businessName} />
+      <Hero waLink={waLink} heroBadge={heroBadge} />
+      <Services services={data.services} waLink={waLink} />
       <Why />
       <Process />
-      <Pricing />
+      <Pricing plans={data.plans} waLink={waLink} />
       <FAQ />
-      <CTA />
-      <Footer />
-      <FloatingWA />
+      <CTA waLink={waLink} />
+      <Footer businessName={businessName} />
+      <FloatingWA waLink={waLink} />
     </div>
   );
 }
 
-function Navbar() {
+type WA = (msg: string) => string;
+
+function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -56,7 +88,7 @@ function Navbar() {
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[image:var(--gradient-hero)] text-primary-foreground shadow-[var(--shadow-elegant)]">
             <ShieldCheck className="h-5 w-5" />
           </div>
-          <span className="text-lg font-bold tracking-tight">Legalin Care</span>
+          <span className="text-lg font-bold tracking-tight">{businessName}</span>
         </a>
         <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
           <a href="#layanan" className="transition hover:text-foreground">Layanan</a>
@@ -66,7 +98,7 @@ function Navbar() {
           <a href="#faq" className="transition hover:text-foreground">FAQ</a>
         </nav>
         <a
-          href={waLink("Halo Legalin Care, saya ingin konsultasi pengurusan NIB/NPWP.")}
+          href={waLink(`Halo ${businessName}, saya ingin konsultasi pengurusan NIB/NPWP.`)}
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-2 rounded-full bg-[color:var(--whatsapp)] px-4 py-2 text-sm font-semibold text-[color:var(--whatsapp-foreground)] shadow-[var(--shadow-card)] transition hover:opacity-90"
@@ -80,7 +112,7 @@ function Navbar() {
   );
 }
 
-function Hero() {
+function Hero({ waLink, heroBadge }: { waLink: WA; heroBadge: string }) {
   return (
     <section className="relative overflow-hidden">
       <div
@@ -94,7 +126,7 @@ function Hero() {
         <div>
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground shadow-[var(--shadow-card)]">
             <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Terpercaya untuk 1.000+ UMKM di Indonesia
+            {heroBadge}
           </span>
           <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight md:text-5xl lg:text-6xl">
             Urus <span className="bg-[image:var(--gradient-hero)] bg-clip-text text-transparent">NIB & NPWP</span> tanpa ribet, tanpa antri.
@@ -188,27 +220,7 @@ function ChatBubble({ side, children }: { side: "left" | "right"; children: Reac
   );
 }
 
-function Services() {
-  const items = [
-    {
-      icon: Building2,
-      title: "Pengurusan NIB (OSS RBA)",
-      desc: "Nomor Induk Berusaha resmi untuk UMKM, PT, dan CV. Termasuk klasifikasi KBLI yang tepat.",
-      points: ["Verifikasi data usaha", "Pendaftaran OSS", "NIB resmi terbit"],
-    },
-    {
-      icon: Receipt,
-      title: "Pengurusan NPWP",
-      desc: "NPWP pribadi maupun badan usaha. Cocok untuk syarat tender, perbankan, dan perpajakan.",
-      points: ["NPWP Pribadi", "NPWP Badan / UMKM", "Aktivasi EFIN"],
-    },
-    {
-      icon: FileText,
-      title: "Legalitas Usaha Lainnya",
-      desc: "Pendirian PT/CV, izin usaha, sertifikat standar, hingga konsultasi pajak bulanan.",
-      points: ["Pendirian PT / CV", "Izin Usaha & Sertifikat", "Konsultasi Pajak"],
-    },
-  ];
+function Services({ services, waLink }: { services: any[]; waLink: WA }) {
   return (
     <section id="layanan" className="mx-auto max-w-6xl px-6 py-20">
       <SectionHeader
@@ -217,18 +229,20 @@ function Services() {
         desc="Fokus jalankan bisnis, biarkan urusan legalitas kami yang tangani."
       />
       <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {items.map((it) => (
+        {services.map((it) => {
+          const Icon = ICONS[it.icon] ?? FileText;
+          return (
           <div
             key={it.title}
             className="group rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-elegant)]"
           >
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
-              <it.icon className="h-6 w-6" />
+              <Icon className="h-6 w-6" />
             </div>
             <h3 className="mt-5 text-lg font-semibold">{it.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{it.desc}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{it.description}</p>
             <ul className="mt-4 space-y-2">
-              {it.points.map((p) => (
+              {(it.points as string[]).map((p) => (
                 <li key={p} className="flex items-center gap-2 text-sm text-foreground">
                   <CheckCircle2 className="h-4 w-4 text-[color:var(--accent)]" />
                   {p}
@@ -244,7 +258,8 @@ function Services() {
               Pesan Sekarang <ArrowRight className="h-4 w-4" />
             </a>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -311,33 +326,7 @@ function Process() {
   );
 }
 
-function Pricing() {
-  const plans = [
-    {
-      name: "NPWP",
-      price: "150K",
-      tag: "Mulai dari",
-      desc: "Cocok untuk pribadi & freelancer.",
-      features: ["NPWP Pribadi / Badan", "Aktivasi EFIN", "Konsultasi gratis", "Selesai 2-3 hari"],
-      featured: false,
-    },
-    {
-      name: "NIB UMKM",
-      price: "300K",
-      tag: "Paling Populer",
-      desc: "Untuk usaha mikro & kecil.",
-      features: ["NIB OSS RBA resmi", "Pemilihan KBLI tepat", "Sertifikat Standar (jika perlu)", "Selesai 3-5 hari"],
-      featured: true,
-    },
-    {
-      name: "Paket Lengkap",
-      price: "750K",
-      tag: "Hemat",
-      desc: "NIB + NPWP Badan sekaligus.",
-      features: ["NIB OSS RBA", "NPWP Badan", "Konsultasi pajak 1 bulan", "Prioritas pengerjaan"],
-      featured: false,
-    },
-  ];
+function Pricing({ plans, waLink }: { plans: any[]; waLink: WA }) {
   return (
     <section id="harga" className="bg-secondary/40 py-20">
       <div className="mx-auto max-w-6xl px-6">
@@ -363,14 +352,14 @@ function Pricing() {
               </div>
               <h3 className="mt-4 text-xl font-bold">{p.name}</h3>
               <p className={`mt-1 text-sm ${p.featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                {p.desc}
+                {p.description}
               </p>
               <div className="mt-5 flex items-baseline gap-1">
                 <span className="text-sm opacity-80">Rp</span>
                 <span className="text-4xl font-bold tracking-tight">{p.price}</span>
               </div>
               <ul className="mt-6 space-y-2.5 text-sm">
-                {p.features.map((f) => (
+                {(p.features as string[]).map((f) => (
                   <li key={f} className="flex items-start gap-2">
                     <CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${p.featured ? "text-white" : "text-[color:var(--accent)]"}`} />
                     <span>{f}</span>
@@ -429,7 +418,7 @@ function FAQ() {
   );
 }
 
-function CTA() {
+function CTA({ waLink }: { waLink: WA }) {
   return (
     <section className="mx-auto max-w-6xl px-6 pb-20">
       <div className="relative overflow-hidden rounded-3xl bg-[image:var(--gradient-hero)] p-10 text-center shadow-[var(--shadow-elegant)] md:p-16">
@@ -454,7 +443,7 @@ function CTA() {
   );
 }
 
-function Footer() {
+function Footer({ businessName }: { businessName: string }) {
   return (
     <footer className="border-t border-border bg-card">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 md:flex-row">
@@ -462,15 +451,15 @@ function Footer() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-hero)] text-primary-foreground">
             <ShieldCheck className="h-4 w-4" />
           </div>
-          <span className="text-sm font-semibold">Legalin Care</span>
+          <span className="text-sm font-semibold">{businessName}</span>
         </div>
-        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Legalin Care. Semua hak dilindungi.</p>
+        <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} {businessName}. Semua hak dilindungi.</p>
       </div>
     </footer>
   );
 }
 
-function FloatingWA() {
+function FloatingWA({ waLink }: { waLink: WA }) {
   return (
     <a
       href={waLink("Halo Legalin Care, saya ingin bertanya.")}
