@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { getSiteData } from "@/lib/site-data.functions";
 import {
   ShieldCheck,
@@ -17,6 +17,8 @@ import {
   PhoneCall,
   ClipboardList,
   Send,
+  Menu,
+  X,
   type LucideIcon,
 } from "lucide-react";
 
@@ -81,6 +83,14 @@ function Index() {
 type WA = (msg: string) => string;
 
 function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) {
+  const [open, setOpen] = useState(false);
+  const navItems = [
+    { href: "#layanan", label: "Layanan" },
+    { href: "#keunggulan", label: "Keunggulan" },
+    { href: "#proses", label: "Proses" },
+    { href: "#harga", label: "Harga" },
+    { href: "#faq", label: "FAQ" },
+  ];
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -91,22 +101,85 @@ function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) 
           <span className="text-lg font-bold tracking-tight">{businessName}</span>
         </a>
         <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
-          <a href="#layanan" className="transition hover:text-foreground">Layanan</a>
-          <a href="#keunggulan" className="transition hover:text-foreground">Keunggulan</a>
-          <a href="#proses" className="transition hover:text-foreground">Proses</a>
-          <a href="#harga" className="transition hover:text-foreground">Harga</a>
-          <a href="#faq" className="transition hover:text-foreground">FAQ</a>
+          {navItems.map((i) => (
+            <a key={i.href} href={i.href} className="transition hover:text-foreground">{i.label}</a>
+          ))}
         </nav>
-        <a
-          href={waLink(`Halo ${businessName}, saya ingin konsultasi pengurusan NIB/NPWP.`)}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-[color:var(--whatsapp)] px-4 py-2 text-sm font-semibold text-[color:var(--whatsapp-foreground)] shadow-[var(--shadow-card)] transition hover:opacity-90"
+        <div className="flex items-center gap-2">
+          <a
+            href={waLink(`Halo ${businessName}, saya ingin konsultasi pengurusan NIB/NPWP.`)}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[color:var(--whatsapp)] px-4 py-2 text-sm font-semibold text-[color:var(--whatsapp-foreground)] shadow-[var(--shadow-card)] transition hover:opacity-90"
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span className="hidden sm:inline">Konsultasi Gratis</span>
+            <span className="sm:hidden">Chat</span>
+          </a>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Buka menu navigasi"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card text-foreground transition hover:bg-muted md:hidden"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile drawer */}
+      <div
+        className={`fixed inset-0 z-50 md:hidden ${open ? "" : "pointer-events-none"}`}
+        aria-hidden={!open}
+      >
+        <div
+          onClick={() => setOpen(false)}
+          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+        />
+        <aside
+          className={`absolute right-0 top-0 flex h-full w-[82%] max-w-xs flex-col bg-background shadow-2xl transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full"}`}
         >
-          <MessageCircle className="h-4 w-4" />
-          <span className="hidden sm:inline">Konsultasi Gratis</span>
-          <span className="sm:hidden">Chat</span>
-        </a>
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-hero)] text-primary-foreground">
+                <ShieldCheck className="h-4 w-4" />
+              </div>
+              <span className="text-base font-bold">{businessName}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Tutup menu"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <nav className="flex flex-col gap-1 p-4">
+            {navItems.map((i) => (
+              <a
+                key={i.href}
+                href={i.href}
+                onClick={() => setOpen(false)}
+                className="rounded-lg px-4 py-3 text-base font-medium text-foreground transition hover:bg-muted"
+              >
+                {i.label}
+              </a>
+            ))}
+          </nav>
+          <div className="mt-auto border-t border-border p-4">
+            <a
+              href={waLink(`Halo ${businessName}, saya ingin konsultasi pengurusan NIB/NPWP.`)}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[color:var(--whatsapp)] px-4 py-3 text-sm font-semibold text-[color:var(--whatsapp-foreground)] shadow-[var(--shadow-card)]"
+            >
+              <MessageCircle className="h-4 w-4" />
+              Konsultasi Gratis
+            </a>
+          </div>
+        </aside>
       </div>
     </header>
   );
