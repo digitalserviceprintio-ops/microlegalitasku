@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Suspense, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { getSiteData } from "@/lib/site-data.functions";
+import logoOss from "@/assets/logo-oss.png";
+import logoCoretax from "@/assets/logo-coretax.png";
 import {
   ShieldCheck,
   FileText,
@@ -102,6 +104,7 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar waLink={waLink} businessName={businessName} />
       <Hero waLink={waLink} heroBadge={heroBadge} />
+      <Partners />
       <Services services={data.services} waLink={waLink} />
       <Why />
       <Process />
@@ -389,6 +392,36 @@ function Services({ services, waLink }: { services: any[]; waLink: WA }) {
 }
 
 function Why() {
+  return WhyImpl();
+}
+
+function Partners() {
+  return (
+    <section aria-label="Terintegrasi dengan sistem resmi pemerintah" className="border-y border-border bg-card/50">
+      <div className="mx-auto max-w-6xl px-6 py-10">
+        <p className="text-center text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          Terintegrasi dengan sistem resmi pemerintah
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-12 gap-y-6 md:gap-x-20">
+          <img
+            src={logoOss}
+            alt="Logo OSS — Online Single Submission"
+            loading="lazy"
+            className="h-12 w-auto object-contain opacity-90 transition hover:opacity-100 md:h-14"
+          />
+          <img
+            src={logoCoretax}
+            alt="Logo Coretax DJP — Direktorat Jenderal Pajak"
+            loading="lazy"
+            className="h-10 w-auto object-contain opacity-90 transition hover:opacity-100 md:h-12"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhyImpl() {
   const items = [
     { icon: Clock, title: "Proses Cepat", desc: "Selesai mulai 3 hari kerja, tanpa drama birokrasi." },
     { icon: ShieldCheck, title: "Resmi & Legal", desc: "Diterbitkan langsung oleh sistem pemerintah." },
