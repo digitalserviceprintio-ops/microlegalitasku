@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { getSiteData } from "@/lib/site-data.functions";
 import {
   ShieldCheck,
@@ -91,7 +92,17 @@ function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) 
     { href: "#harga", label: "Harga" },
     { href: "#faq", label: "FAQ" },
   ];
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const prev = document.body.style.overflow;
+    if (open) document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+  const mounted = typeof document !== "undefined";
   return (
+    <>
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <a href="#" className="flex items-center gap-2">
@@ -126,18 +137,21 @@ function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) 
           </button>
         </div>
       </div>
-
-      {/* Mobile drawer */}
+    </header>
+    {/* Mobile drawer — portaled to body so it escapes the sticky header's stacking context */}
+    {mounted && createPortal(
       <div
-        className={`fixed inset-0 z-50 md:hidden ${open ? "" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[100] md:hidden ${open ? "" : "pointer-events-none"}`}
+        style={{ height: "100dvh" }}
         aria-hidden={!open}
       >
         <div
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
+          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
         />
         <aside
           className={`absolute right-0 top-0 flex h-full w-[82%] max-w-xs flex-col bg-background shadow-2xl transition-transform duration-300 ease-out ${open ? "translate-x-0" : "translate-x-full"}`}
+          style={{ height: "100dvh" }}
         >
           <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <div className="flex items-center gap-2">
@@ -180,8 +194,10 @@ function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) 
             </a>
           </div>
         </aside>
-      </div>
-    </header>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
 
