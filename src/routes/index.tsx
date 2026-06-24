@@ -4,8 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { Suspense, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { getSiteData } from "@/lib/site-data.functions";
-import logoOss from "@/assets/logo-oss.png";
-import logoCoretax from "@/assets/logo-coretax.png";
+import logoOss from "@/assets/logo-oss.webp";
+import logoCoretax from "@/assets/logo-coretax.webp";
 import {
   ShieldCheck,
   FileText,
@@ -407,12 +407,18 @@ function Partners() {
             src={logoOss}
             alt="Logo OSS — Online Single Submission"
             loading="lazy"
+            decoding="async"
+            width={240}
+            height={160}
             className="h-12 w-auto object-contain opacity-90 transition hover:opacity-100 md:h-14"
           />
           <img
             src={logoCoretax}
             alt="Logo Coretax DJP — Direktorat Jenderal Pajak"
             loading="lazy"
+            decoding="async"
+            width={240}
+            height={160}
             className="h-10 w-auto object-contain opacity-90 transition hover:opacity-100 md:h-12"
           />
         </div>
