@@ -26,9 +26,16 @@ Lovable Cloud — jangan diedit manual).
 ## Deploy ke Cloudflare Workers
 
 TanStack Start + Nitro (preset Cloudflare) meng-generate worker bundle
-dan static assets ke folder `.output/` saat `vite build`. File
-[`wrangler.jsonc`](./wrangler.jsonc) di root sudah menunjuk ke output
-tersebut, jadi `wrangler deploy` cukup dijalankan setelah build.
+dan static assets ke folder `dist/` saat `vite build`:
+
+- `dist/server/index.mjs` — worker entry
+- `dist/server/wrangler.json` — config wrangler yang **otomatis di-generate**
+  Nitro (jangan dibuat manual di root — akan di-override dan memunculkan
+  warning `Wrangler config main is overridden`)
+- `dist/client/` — static assets (binding `ASSETS`)
+
+Karena `wrangler.json` ada di `dist/server/`, deploy harus menunjuk ke
+config tersebut secara eksplisit.
 
 ### 1. Pengaturan Build di Cloudflare Dashboard
 
@@ -38,10 +45,10 @@ Buka **Workers & Pages → (project kamu) → Settings → Builds** dan isi:
 | --- | --- |
 | **Root directory** | `/` |
 | **Build command** | `bun install && bun run build` |
-| **Deploy command** | `npx wrangler deploy` |
+| **Deploy command** | `npx wrangler deploy --config dist/server/wrangler.json` |
 | **Branch** | `main` (atau branch produksi kamu) |
 
-> ⚠️ Kalau **Build command** dibiarkan `None`, `.output/` tidak pernah
+> ⚠️ Kalau **Build command** dibiarkan `None`, `dist/` tidak pernah
 > dibuat dan `wrangler deploy` akan gagal dengan error
 > `Missing entry-point` / build error ±20–30 detik. Ini penyebab
 > deployment yang sebelumnya gagal.
@@ -65,7 +72,8 @@ jadi wajib tersedia sebelum `bun run build` jalan. Variabel server-only
 
 ### 3. Compatibility Settings
 
-Sudah ditetapkan di `wrangler.jsonc` dan tidak perlu diubah di dashboard:
+Sudah ditetapkan otomatis di `dist/server/wrangler.json` oleh Nitro dan
+tidak perlu diubah di dashboard:
 
 - `compatibility_date`: `2025-06-01`
 - `compatibility_flags`: `["nodejs_compat"]`
@@ -76,13 +84,13 @@ Sudah ditetapkan di `wrangler.jsonc` dan tidak perlu diubah di dashboard:
 bun install
 bun run build
 npx wrangler login          # sekali saja
-npx wrangler deploy
+npx wrangler deploy --config dist/server/wrangler.json
 ```
 
 ### 5. Verifikasi Setelah Deploy
 
 - Cek log build di Cloudflare — pastikan ada baris `vite build` sukses
-  dan `.output/server/index.mjs` ter-upload.
+  dan `dist/server/index.mjs` ter-upload.
 - Buka URL worker → landing page harus tampil, drawer mobile jalan,
   dan tombol WhatsApp mengarah ke `wa.me/6282186371356`.
 - Login admin di `/auth` masih bekerja (Supabase auth via publishable key).
@@ -102,7 +110,8 @@ Custom domain bisa disambungkan di **Project Settings → Domains**.
 | Gejala | Penyebab | Solusi |
 | --- | --- | --- |
 | Build gagal ±20 dtk, log kosong | Build command `None` | Set ke `bun install && bun run build` |
-| `Missing entry-point` saat deploy | `.output/` belum dibuat | Pastikan build jalan sebelum `wrangler deploy` |
+| `Missing entry-point` saat deploy | `dist/` belum dibuat atau config wrangler salah | Pastikan build jalan & pakai `--config dist/server/wrangler.json` |
 | Halaman blank, error `VITE_SUPABASE_URL undefined` | Env `VITE_*` belum di-set di Cloudflare | Tambahkan di Variables and Secrets, lalu re-deploy |
 | `[unenv] X is not implemented` | Pakai modul Node yang tidak didukung Workers | Ganti dengan API web standar / fetch |
-| 404 saat refresh route dalam | `assets.directory` salah | Pastikan `wrangler.jsonc` menunjuk `.output/public` |
+| `Wrangler config main is overridden` warning | Ada `wrangler.jsonc` manual di root | Hapus — Nitro otomatis generate `dist/server/wrangler.json` |
+| 404 saat refresh route dalam | Pakai config wrangler yang salah | Gunakan `dist/server/wrangler.json` yang di-generate Nitro |
