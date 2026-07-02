@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 import { getSiteData } from "@/lib/site-data.functions";
 import logoOss from "@/assets/logo-oss.webp";
 import logoCoretax from "@/assets/logo-coretax.webp";
+import logoAmdalnet from "@/assets/logo-amdalnet.png.asset.json";
 import promoBanner from "@/assets/promo-banner.webp.asset.json";
 import csTeam from "@/assets/cs-team.jpg.asset.json";
 import {
@@ -508,6 +509,15 @@ function Partners() {
             decoding="async"
             width={240}
             height={160}
+            className="h-10 w-auto object-contain opacity-90 transition hover:opacity-100 md:h-12"
+          />
+          <img
+            src={logoAmdalnet.url}
+            alt="Logo Amdalnet — Sistem Informasi Dokumen Lingkungan Hidup"
+            loading="lazy"
+            decoding="async"
+            width={240}
+            height={80}
             className="h-10 w-auto object-contain opacity-90 transition hover:opacity-100 md:h-12"
           />
         </div>
