@@ -7,6 +7,7 @@ import { getSiteData } from "@/lib/site-data.functions";
 import logoOss from "@/assets/logo-oss.webp";
 import logoCoretax from "@/assets/logo-coretax.webp";
 import promoBanner from "@/assets/promo-banner.webp.asset.json";
+import csTeam from "@/assets/cs-team.jpg.asset.json";
 import {
   ShieldCheck,
   FileText,
@@ -374,6 +375,16 @@ function Hero({ waLink, heroBadge }: { waLink: WA; heroBadge: string }) {
         <div className="relative">
           <div className="absolute inset-0 -z-10 rounded-3xl bg-[image:var(--gradient-hero)] opacity-20 blur-2xl" />
           <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-elegant)]">
+            <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-3xl">
+              <img
+                src={csTeam.url}
+                alt="Tim customer service Legalin Care siap membantu via WhatsApp"
+                width={1600}
+                height={896}
+                loading="lazy"
+                className="aspect-[16/9] w-full object-cover sm:aspect-[16/8]"
+              />
+            </div>
             <div className="flex items-center justify-between border-b border-border pb-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--whatsapp)] text-[color:var(--whatsapp-foreground)]">
