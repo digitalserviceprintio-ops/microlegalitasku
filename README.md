@@ -97,10 +97,6 @@ npx wrangler deploy --config dist/server/wrangler.json
 
 ---
 
-## Alternatif: Publish via Lovable
-
----
-
 ## Deploy ke Vercel
 
 Nitro (preset auto-detect) mengenali environment Vercel lewat variabel
