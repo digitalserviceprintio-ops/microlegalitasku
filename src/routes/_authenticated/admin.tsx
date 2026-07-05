@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — Mitra Legalitas UMKM" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Admin — Mitra Legal UMKM" }, { name: "robots", content: "noindex" }] }),
   component: AdminPage,
 });
 
@@ -67,7 +67,7 @@ function AdminPage() {
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-sm font-bold leading-tight">Mitra Legalitas UMKM</div>
+              <div className="text-sm font-bold leading-tight">Mitra Legal UMKM</div>
               <div className="text-xs text-muted-foreground">Panel Admin</div>
             </div>
           </div>
