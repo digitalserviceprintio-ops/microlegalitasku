@@ -25,6 +25,10 @@ import {
   Send,
   Menu,
   X,
+  CreditCard,
+  Wallet,
+  Copy,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 
@@ -112,6 +116,7 @@ function Index() {
       <Why />
       <Process />
       <Pricing plans={data.plans} waLink={waLink} />
+      <Payments payments={data.payments ?? []} waLink={waLink} />
       <FAQ />
       <CTA waLink={waLink} />
       <Footer businessName={businessName} />
