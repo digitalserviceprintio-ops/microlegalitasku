@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      payment_methods: {
+        Row: {
+          account_name: string
+          account_number: string
+          active: boolean
+          bank_name: string
+          created_at: string
+          id: string
+          logo_url: string
+          notes: string
+          order_index: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          active?: boolean
+          bank_name: string
+          created_at?: string
+          id?: string
+          logo_url?: string
+          notes?: string
+          order_index?: number
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          active?: boolean
+          bank_name?: string
+          created_at?: string
+          id?: string
+          logo_url?: string
+          notes?: string
+          order_index?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pricing_plans: {
         Row: {
           active: boolean
