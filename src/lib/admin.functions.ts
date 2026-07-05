@@ -120,3 +120,56 @@ export const updateSetting = createServerFn({ method: "POST" })
     if (error) throw error;
     return { ok: true };
   });
+
+// Payment methods
+const paymentSchema = z.object({
+  id: z.string().uuid().optional(),
+  bank_name: z.string().min(1).max(100),
+  account_name: z.string().min(1).max(100),
+  account_number: z.string().min(1).max(50),
+  logo_url: z.string().max(500).default(""),
+  type: z.string().min(1).max(30),
+  notes: z.string().max(300).default(""),
+  order_index: z.number().int(),
+  active: z.boolean(),
+});
+
+export const listPaymentMethods = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("payment_methods")
+      .select("*")
+      .order("order_index");
+    if (error) throw error;
+    return data ?? [];
+  });
+
+export const upsertPaymentMethod = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => paymentSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.id) {
+      const { error } = await supabaseAdmin.from("payment_methods").update(data).eq("id", data.id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabaseAdmin.from("payment_methods").insert(data);
+      if (error) throw error;
+    }
+    return { ok: true };
+  });
+
+export const deletePaymentMethod = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("payment_methods").delete().eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
