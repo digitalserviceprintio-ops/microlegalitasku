@@ -11,10 +11,13 @@ import {
   upsertPlan,
   deletePlan,
   updateSetting,
+  listPaymentMethods,
+  upsertPaymentMethod,
+  deletePaymentMethod,
 } from "@/lib/admin.functions";
 import {
   ShieldCheck, LogOut, Plus, Trash2, Save, Loader2, Package,
-  Tag, Settings, ExternalLink,
+  Tag, Settings, ExternalLink, CreditCard,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -22,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "services" | "pricing" | "settings";
+type Tab = "services" | "pricing" | "payments" | "settings";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -45,6 +48,13 @@ function AdminPage() {
     enabled: authorized === true,
   });
 
+  const listPay = useServerFn(listPaymentMethods);
+  const { data: payments } = useQuery({
+    queryKey: ["payment-methods-admin"],
+    queryFn: () => listPay(),
+    enabled: authorized === true,
+  });
+
   async function handleLogout() {
     await qc.cancelQueries();
     qc.clear();
@@ -52,7 +62,10 @@ function AdminPage() {
     navigate({ to: "/auth", replace: true });
   }
 
-  const refresh = () => qc.invalidateQueries({ queryKey: ["site-data-admin"] });
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ["site-data-admin"] });
+    qc.invalidateQueries({ queryKey: ["payment-methods-admin"] });
+  };
 
   if (authorized === null) {
     return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>;
@@ -84,6 +97,7 @@ function AdminPage() {
           {([
             { k: "services", l: "Layanan", icon: Package },
             { k: "pricing", l: "Harga", icon: Tag },
+            { k: "payments", l: "Pembayaran", icon: CreditCard },
             { k: "settings", l: "Pengaturan", icon: Settings },
           ] as const).map((t) => (
             <button
@@ -106,6 +120,7 @@ function AdminPage() {
           <>
             {tab === "services" && <ServicesManager services={data.services} onChange={refresh} />}
             {tab === "pricing" && <PricingManager plans={data.plans} onChange={refresh} />}
+            {tab === "payments" && <PaymentsManager payments={payments ?? []} onChange={refresh} />}
             {tab === "settings" && <SettingsManager settings={data.settings} onChange={refresh} />}
           </>
         )}
