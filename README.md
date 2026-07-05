@@ -1,4 +1,4 @@
-# Legalin Care
+# Mitra Legalitas UMKM
 
 Landing page agen jasa pengurusan **NIB & NPWP** dengan dashboard admin
 (kelola layanan, harga, dan pengaturan situs) serta integrasi pemesanan
@@ -152,7 +152,7 @@ men-deploy sebagai Serverless/Edge Function + static assets. Tidak perlu
 ## Alternatif: Publish via Lovable
 
 Tombol **Publish** di editor Lovable melakukan build + deploy otomatis
-ke `https://legalincare.lovable.app` tanpa setup Cloudflare manual.
+ke `https://legalitaskuumkm.lovable.app` tanpa setup Cloudflare manual.
 Custom domain bisa disambungkan di **Project Settings → Domains**.
 
 ---
