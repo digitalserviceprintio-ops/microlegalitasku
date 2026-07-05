@@ -12,10 +12,11 @@ function publicClient() {
 
 export const getSiteData = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = publicClient();
-  const [services, plans, settings] = await Promise.all([
+  const [services, plans, settings, payments] = await Promise.all([
     supabase.from("services").select("*").eq("active", true).order("order_index"),
     supabase.from("pricing_plans").select("*").eq("active", true).order("order_index"),
     supabase.from("site_settings").select("*"),
+    supabase.from("payment_methods").select("*").eq("active", true).order("order_index"),
   ]);
   const settingsMap: Record<string, string> = {};
   for (const row of settings.data ?? []) settingsMap[row.key] = row.value;
@@ -23,5 +24,6 @@ export const getSiteData = createServerFn({ method: "GET" }).handler(async () =>
     services: services.data ?? [],
     plans: plans.data ?? [],
     settings: settingsMap,
+    payments: payments.data ?? [],
   };
 });
