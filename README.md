@@ -1,4 +1,4 @@
-# Mitra Legalitas UMKM
+# Mitra Legal UMKM
 
 Landing page agen jasa pengurusan **NIB & NPWP** dengan dashboard admin
 (kelola layanan, harga, dan pengaturan situs) serta integrasi pemesanan

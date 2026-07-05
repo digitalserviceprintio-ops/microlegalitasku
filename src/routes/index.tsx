@@ -35,9 +35,9 @@ const ICONS: Record<string, LucideIcon> = {
 
 export const Route = createFileRoute("/")({
   head: () => {
-    const title = "Jasa Pengurusan NIB & NPWP Online Cepat — Mitra Legalitas UMKM";
+    const title = "Jasa Pengurusan NIB & NPWP Online Cepat — Mitra Legal UMKM";
     const description =
-      "Mitra Legalitas UMKM: jasa pengurusan NIB, NPWP, dan legalitas usaha untuk UMKM & perusahaan. Proses cepat, transparan, dan profesional. Konsultasi gratis via WhatsApp.";
+      "Mitra Legal UMKM: jasa pengurusan NIB, NPWP, dan legalitas usaha untuk UMKM & perusahaan. Proses cepat, transparan, dan profesional. Konsultasi gratis via WhatsApp.";
     const url = "https://legalitaskuumkm.lovable.app/";
     return {
       meta: [
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/")({
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ProfessionalService",
-            name: "Mitra Legalitas UMKM",
+            name: "Mitra Legal UMKM",
             description,
             url,
             areaServed: "ID",
@@ -100,7 +100,7 @@ function Index() {
   });
   const wa = data.settings.whatsapp_number || "6282186371356";
   const waLink = waLinkBuilder(wa);
-  const businessName = data.settings.business_name || "Mitra Legalitas UMKM";
+  const businessName = data.settings.business_name || "Mitra Legal UMKM";
   const heroBadge = data.settings.hero_badge || "Terpercaya untuk 1.000+ UMKM di Indonesia";
 
   return (
@@ -146,7 +146,7 @@ function PromoModal({ waLink, businessName }: { waLink: WA; businessName: string
       style={{ height: "100dvh" }}
       role="dialog"
       aria-modal="true"
-      aria-label="Promo Mitra Legalitas UMKM"
+      aria-label="Promo Mitra Legal UMKM"
     >
       <div
         onClick={() => setOpen(false)}
@@ -172,7 +172,7 @@ function PromoModal({ waLink, businessName }: { waLink: WA; businessName: string
         >
           <img
             src={promoBanner.url}
-            alt="Promo Mitra Legalitas UMKM — Jasa Pengurusan NIB & NPWP"
+            alt="Promo Mitra Legal UMKM — Jasa Pengurusan NIB & NPWP"
             className="block h-auto w-full object-contain"
             loading="eager"
             decoding="async"
@@ -338,11 +338,11 @@ function Hero({ waLink, heroBadge }: { waLink: WA; heroBadge: string }) {
             Urus <span className="bg-[image:var(--gradient-hero)] bg-clip-text text-transparent">NIB & NPWP</span> tanpa ribet, tanpa antri.
           </h1>
           <p className="mt-5 max-w-lg text-base leading-relaxed text-muted-foreground md:text-lg">
-            Mitra Legalitas UMKM membantu Anda mengurus legalitas usaha secara online — cepat, transparan, dan didampingi konsultan berpengalaman. Cukup chat WhatsApp, kami yang urus.
+            Mitra Legal UMKM membantu Anda mengurus legalitas usaha secara online — cepat, transparan, dan didampingi konsultan berpengalaman. Cukup chat WhatsApp, kami yang urus.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href={waLink("Halo Mitra Legalitas UMKM, saya ingin memulai pengurusan NIB/NPWP.")}
+              href={waLink("Halo Mitra Legal UMKM, saya ingin memulai pengurusan NIB/NPWP.")}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-[color:var(--whatsapp)] px-6 py-3 text-sm font-semibold text-[color:var(--whatsapp-foreground)] shadow-[var(--shadow-elegant)] transition hover:scale-[1.02]"
@@ -379,7 +379,7 @@ function Hero({ waLink, heroBadge }: { waLink: WA; heroBadge: string }) {
             <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-3xl">
               <img
                 src={csTeam.url}
-                alt="Tim customer service Mitra Legalitas UMKM siap membantu via WhatsApp"
+                alt="Tim customer service Mitra Legal UMKM siap membantu via WhatsApp"
                 width={1600}
                 height={896}
                 loading="lazy"
@@ -392,14 +392,14 @@ function Hero({ waLink, heroBadge }: { waLink: WA; heroBadge: string }) {
                   <MessageCircle className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="text-sm font-semibold">Mitra Legalitas UMKM</div>
+                  <div className="text-sm font-semibold">Mitra Legal UMKM</div>
                   <div className="text-xs text-[color:var(--whatsapp)]">● Online sekarang</div>
                 </div>
               </div>
               <span className="text-xs text-muted-foreground">WhatsApp</span>
             </div>
             <div className="mt-4 space-y-3 text-sm">
-              <ChatBubble side="left">Halo, selamat datang di Mitra Legalitas UMKM 👋 Ada yang bisa kami bantu?</ChatBubble>
+              <ChatBubble side="left">Halo, selamat datang di Mitra Legal UMKM 👋 Ada yang bisa kami bantu?</ChatBubble>
               <ChatBubble side="right">Saya mau urus NIB & NPWP untuk UMKM saya.</ChatBubble>
               <ChatBubble side="left">Siap! Prosesnya cepat, mulai dari <b>Rp 150.000</b> dan selesai dalam 3 hari kerja ✅</ChatBubble>
               <ChatBubble side="right">Boleh dibantu sekarang?</ChatBubble>
@@ -537,7 +537,7 @@ function WhyImpl() {
     <section id="keunggulan" className="bg-secondary/40 py-20">
       <div className="mx-auto max-w-6xl px-6">
         <SectionHeader
-          eyebrow="Mengapa Mitra Legalitas UMKM"
+          eyebrow="Mengapa Mitra Legal UMKM"
           title="Dipercaya pelaku usaha di seluruh Indonesia"
           desc="Kami menggabungkan kecepatan, transparansi, dan keramahan layanan."
         />
@@ -692,7 +692,7 @@ function CTA({ waLink }: { waLink: WA }) {
           Konsultasi gratis. Tim kami siap menjawab semua pertanyaan Anda via WhatsApp.
         </p>
         <a
-          href={waLink("Halo Mitra Legalitas UMKM, saya ingin konsultasi gratis.")}
+          href={waLink("Halo Mitra Legal UMKM, saya ingin konsultasi gratis.")}
           target="_blank"
           rel="noreferrer"
           className="relative mt-7 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-primary transition hover:scale-[1.02]"
@@ -723,7 +723,7 @@ function Footer({ businessName }: { businessName: string }) {
 function FloatingWA({ waLink }: { waLink: WA }) {
   return (
     <a
-      href={waLink("Halo Mitra Legalitas UMKM, saya ingin bertanya.")}
+      href={waLink("Halo Mitra Legal UMKM, saya ingin bertanya.")}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat WhatsApp"
