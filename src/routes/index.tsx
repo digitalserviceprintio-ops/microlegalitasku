@@ -226,7 +226,7 @@ function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) 
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[image:var(--gradient-hero)] text-primary-foreground shadow-[var(--shadow-elegant)]">
             <ShieldCheck className="h-5 w-5" />
           </div>
-          <span className="text-lg font-bold tracking-tight">{businessName}</span>
+          <span className="text-lg font-bold tracking-tight">Mitra Legal UMKM</span>
         </a>
         <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
           {navItems.map((i) => (
@@ -275,7 +275,7 @@ function Navbar({ waLink, businessName }: { waLink: WA; businessName: string }) 
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-hero)] text-primary-foreground">
                 <ShieldCheck className="h-4 w-4" />
               </div>
-              <span className="text-base font-bold">{businessName}</span>
+              <span className="text-base font-bold">Mitra Legal UMKM</span>
             </div>
             <button
               type="button"
