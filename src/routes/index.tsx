@@ -751,3 +751,109 @@ function SectionHeader({ eyebrow, title, desc }: { eyebrow: string; title: strin
     </div>
   );
 }
+
+type PaymentMethod = {
+  id: string;
+  bank_name: string;
+  account_name: string;
+  account_number: string;
+  logo_url: string;
+  type: string;
+  notes: string;
+};
+
+function Payments({ payments, waLink }: { payments: PaymentMethod[]; waLink: WA }) {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  async function copy(id: string, value: string) {
+    try {
+      await navigator.clipboard.writeText(value.replace(/\s+/g, ""));
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1600);
+    } catch {}
+  }
+
+  if (!payments.length) return null;
+
+  return (
+    <section id="pembayaran" className="border-t border-border bg-secondary/30 py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <SectionHeader
+          eyebrow="Metode Pembayaran"
+          title="Bayar Mudah & Aman"
+          desc="Transfer ke salah satu rekening resmi kami di bawah ini. Setelah membayar, kirim bukti transfer via WhatsApp untuk verifikasi cepat."
+        />
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {payments.map((p) => {
+            const Icon = p.type === "ewallet" ? Wallet : CreditCard;
+            return (
+              <div
+                key={p.id}
+                className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-elegant)]"
+              >
+                <div className="flex items-start gap-3">
+                  {p.logo_url ? (
+                    <img
+                      src={p.logo_url}
+                      alt={p.bank_name}
+                      className="h-10 w-10 rounded-lg object-contain bg-background p-1 ring-1 ring-border"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      {p.type === "ewallet" ? "E-Wallet" : "Rekening Bank"}
+                    </div>
+                    <div className="truncate text-base font-bold">{p.bank_name}</div>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <div className="flex items-center justify-between gap-2 rounded-xl bg-background px-3 py-2 ring-1 ring-border">
+                    <span className="truncate font-mono text-sm font-semibold tracking-wide">
+                      {p.account_number}
+                    </span>
+                    <button
+                      onClick={() => copy(p.id, p.account_number)}
+                      aria-label="Salin nomor rekening"
+                      className="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-2 py-1 text-xs font-semibold text-primary transition hover:bg-primary/20"
+                    >
+                      {copiedId === p.id ? (
+                        <>
+                          <Check className="h-3.5 w-3.5" /> Tersalin
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3.5 w-3.5" /> Salin
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    a.n. <span className="font-medium text-foreground">{p.account_name}</span>
+                  </div>
+                  {p.notes && (
+                    <div className="mt-1 text-xs text-muted-foreground">{p.notes}</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="mt-8 flex justify-center">
+          <a
+            href={waLink("Halo Mitra Legal UMKM, saya sudah melakukan pembayaran dan ingin mengirim bukti transfer.")}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-[image:var(--gradient-hero)] px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--shadow-elegant)] transition hover:scale-[1.02]"
+          >
+            <MessageCircle className="h-4 w-4" /> Kirim Bukti Transfer
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
