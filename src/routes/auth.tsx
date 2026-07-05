@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Login Admin — Legalin Care" },
+      { title: "Login Admin — Mitra Legalitas UMKM" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -26,7 +26,7 @@ function AuthPage() {
     setError(null);
     setLoading(true);
     try {
-      const email = username.includes("@") ? username : `${username}@legalin.care`;
+      const email = username.includes("@") ? username : `${username}@mitralegalitasumkm.id`;
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       navigate({ to: "/admin" });
@@ -44,7 +44,7 @@ function AuthPage() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[image:var(--gradient-hero)] text-primary-foreground shadow-[var(--shadow-elegant)]">
             <ShieldCheck className="h-5 w-5" />
           </div>
-          <span className="text-xl font-bold">Legalin Care</span>
+          <span className="text-xl font-bold">Mitra Legalitas UMKM</span>
         </div>
         <div className="rounded-3xl border border-border bg-card p-7 shadow-[var(--shadow-elegant)]">
           <h1 className="text-xl font-bold">Login Admin</h1>
